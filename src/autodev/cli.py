@@ -79,8 +79,10 @@ def _record_metrics(settings: Settings, store: Store) -> None:
             continue
         metrics = scanner.file_metrics(module, coverage=coverage_map.get(str(module.resolve())))
         store.store_metrics(
-            metrics["file_path"], metrics["complexity"],
-            metrics["coverage"], metrics["lines_of_code"],
+            metrics["file_path"],
+            metrics["complexity"],
+            metrics["coverage"],
+            metrics["lines_of_code"],
         )
 
 

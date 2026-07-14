@@ -45,7 +45,9 @@ def test_dashboard_renders(client, tmp_path):
 
 def test_job_detail_renders_diff(client, tmp_path):
     job_id = seed_job(
-        tmp_path, status="completed", branch_name="autodev/x",
+        tmp_path,
+        status="completed",
+        branch_name="autodev/x",
         diff_summary="+added line\n-removed line",
     )
     response = client.get(f"/job/{job_id}")

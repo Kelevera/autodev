@@ -4,10 +4,20 @@ from autodev.core import analyzer, planner
 from autodev.core.scanner import Issue
 
 
-def make_issue(file_path="src/mod.py", line=1, issue_type="missing_docstring",
-               severity="medium", description="desc"):
-    return Issue(file_path=file_path, line_no=line, issue_type=issue_type,
-                 severity=severity, description=description)
+def make_issue(
+    file_path="src/mod.py",
+    line=1,
+    issue_type="missing_docstring",
+    severity="medium",
+    description="desc",
+):
+    return Issue(
+        file_path=file_path,
+        line_no=line,
+        issue_type=issue_type,
+        severity=severity,
+        description=description,
+    )
 
 
 ISSUES = [

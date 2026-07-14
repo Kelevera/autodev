@@ -77,8 +77,13 @@ class AnthropicClient(LLMClient):
     provider = "anthropic"
     unavailable_hint = "Verify AUTODEV_API_KEY and network access to api.anthropic.com."
 
-    def __init__(self, api_key: str, model: str = DEFAULT_MODELS["anthropic"],
-                 base_url: str = "https://api.anthropic.com", **kwargs: Any) -> None:
+    def __init__(
+        self,
+        api_key: str,
+        model: str = DEFAULT_MODELS["anthropic"],
+        base_url: str = "https://api.anthropic.com",
+        **kwargs: Any,
+    ) -> None:
         if not api_key:
             raise LLMError("Anthropic provider requires an API key: set AUTODEV_API_KEY.")
         super().__init__(model=model, **kwargs)
@@ -111,8 +116,13 @@ class OpenAIClient(LLMClient):
     provider = "openai"
     unavailable_hint = "Verify AUTODEV_API_KEY (and AUTODEV_BASE_URL for compatible servers)."
 
-    def __init__(self, api_key: str, model: str = DEFAULT_MODELS["openai"],
-                 base_url: str = "https://api.openai.com/v1", **kwargs: Any) -> None:
+    def __init__(
+        self,
+        api_key: str,
+        model: str = DEFAULT_MODELS["openai"],
+        base_url: str = "https://api.openai.com/v1",
+        **kwargs: Any,
+    ) -> None:
         if not api_key:
             raise LLMError("OpenAI provider requires an API key: set AUTODEV_API_KEY.")
         super().__init__(model=model, **kwargs)
@@ -120,7 +130,7 @@ class OpenAIClient(LLMClient):
         self.base_url = base_url.rstrip("/")
 
     def _call(self, prompt: str, system: str | None, temperature: float) -> str:
-        messages = ([{"role": "system", "content": system}] if system else [])
+        messages = [{"role": "system", "content": system}] if system else []
         messages.append({"role": "user", "content": prompt})
         response = httpx.post(
             f"{self.base_url}/chat/completions",
@@ -146,13 +156,17 @@ class OllamaClient(LLMClient):
         " AUTODEV_LLM_PROVIDER=anthropic|openai with AUTODEV_API_KEY for a hosted provider."
     )
 
-    def __init__(self, model: str = DEFAULT_MODELS["ollama"],
-                 base_url: str = "http://localhost:11434", **kwargs: Any) -> None:
+    def __init__(
+        self,
+        model: str = DEFAULT_MODELS["ollama"],
+        base_url: str = "http://localhost:11434",
+        **kwargs: Any,
+    ) -> None:
         super().__init__(model=model, **kwargs)
         self.base_url = base_url.rstrip("/")
 
     def _call(self, prompt: str, system: str | None, temperature: float) -> str:
-        messages = ([{"role": "system", "content": system}] if system else [])
+        messages = [{"role": "system", "content": system}] if system else []
         messages.append({"role": "user", "content": prompt})
         response = httpx.post(
             f"{self.base_url}/api/chat",

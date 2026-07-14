@@ -97,8 +97,9 @@ def test_review_without_jobs(project):
 def test_review_with_completed_job(project):
     store = Store(project / "autodev-test.db")
     job_id = store.create_job("refactor", "src/pkg/mod.py")
-    store.update_job(job_id, status="completed", branch_name="autodev/x",
-                     diff_summary="+ improved = True")
+    store.update_job(
+        job_id, status="completed", branch_name="autodev/x", diff_summary="+ improved = True"
+    )
     store.close()
     result = runner.invoke(app, ["review"])
     assert result.exit_code == 0

@@ -119,14 +119,20 @@ class Executor:
             diff = self.git.diff_against_main()
             self.git.checkout(self.git.main_branch)
             self.store.update_job(
-                job["id"], status="completed", completed_at=utcnow(),
-                result=detail, diff_summary=diff,
+                job["id"],
+                status="completed",
+                completed_at=utcnow(),
+                result=detail,
+                diff_summary=diff,
             )
             return True
         self.git.revert_to_main(remove_paths=[write_path] if write_path != target else None)
         self.git.delete_branch(branch)
         self.store.update_job(
-            job["id"], status="failed", completed_at=utcnow(), result=detail,
+            job["id"],
+            status="failed",
+            completed_at=utcnow(),
+            result=detail,
         )
         return False
 
@@ -209,7 +215,11 @@ class Executor:
         if test_path is not None:
             cmd.append(str(test_path))
         proc = subprocess.run(
-            cmd, cwd=self.repo_path, capture_output=True, text=True, timeout=self.test_timeout,
+            cmd,
+            cwd=self.repo_path,
+            capture_output=True,
+            text=True,
+            timeout=self.test_timeout,
         )
         # Exit code 5 = "no tests collected": acceptable for a whole-suite run
         # (repo may have no tests yet), never for a freshly generated test file.

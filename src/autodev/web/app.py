@@ -48,8 +48,10 @@ def _run_scan() -> None:
             continue
         metrics = scanner.file_metrics(module, coverage=coverage_map.get(str(module.resolve())))
         store.store_metrics(
-            metrics["file_path"], metrics["complexity"],
-            metrics["coverage"], metrics["lines_of_code"],
+            metrics["file_path"],
+            metrics["complexity"],
+            metrics["coverage"],
+            metrics["lines_of_code"],
         )
     create_jobs_from_plans(store, planner.build_plans(issues))
 
@@ -73,7 +75,8 @@ def dashboard(request: Request):
         "failed": sum(1 for j in jobs if j["status"] == "failed"),
     }
     return templates.TemplateResponse(
-        request, "dashboard.html",
+        request,
+        "dashboard.html",
         {"jobs": jobs[:50], "metrics": metrics, "counts": counts},
     )
 

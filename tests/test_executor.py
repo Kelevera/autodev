@@ -20,9 +20,7 @@ def repo_dir(tmp_path):
     with repo.config_writer() as config:
         config.set_value("user", "name", "autodev-test")
         config.set_value("user", "email", "autodev@test.local")
-    (tmp_path / "calc.py").write_text(
-        'def add(a, b):\n    return a + b\n', encoding="utf-8"
-    )
+    (tmp_path / "calc.py").write_text("def add(a, b):\n    return a + b\n", encoding="utf-8")
     repo.git.add("calc.py")
     repo.git.commit("-m", "initial")
     return tmp_path
@@ -119,8 +117,11 @@ def test_llm_exception_marks_job_failed(repo_dir, store):
 def test_create_jobs_from_plans_dedupes(repo_dir, store):
     executor, _ = make_executor(repo_dir, store, [])
     plan = ImprovementPlan(
-        target_file="calc.py", job_type="add_tests", priority="critical",
-        suggested_changes=["line 1: no tests"], estimated_effort="low",
+        target_file="calc.py",
+        job_type="add_tests",
+        priority="critical",
+        suggested_changes=["line 1: no tests"],
+        estimated_effort="low",
     )
     first = executor.create_jobs_from_plans([plan, plan])
     second = executor.create_jobs_from_plans([plan])

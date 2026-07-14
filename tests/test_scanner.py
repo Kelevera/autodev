@@ -30,8 +30,11 @@ def test_scan_file_flags_missing_docstring_and_hints(tmp_path):
     types = {(i.issue_type, i.description.split("'")[1]) for i in issues}
     assert ("missing_docstring", "undocumented") in types
     assert ("missing_type_hints", "undocumented") in types
-    assert not any("documented'" in i.description and i.issue_type == "missing_docstring"
-                   for i in issues if "un" not in i.description)
+    assert not any(
+        "documented'" in i.description and i.issue_type == "missing_docstring"
+        for i in issues
+        if "un" not in i.description
+    )
 
 
 def test_scan_file_clean_function_has_no_issues(tmp_path):

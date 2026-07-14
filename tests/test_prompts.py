@@ -10,6 +10,7 @@ def test_BUILD_PROMPT():
     assert "generate comprehensive pytest tests including edge cases." in prompt
     assert f"The module is importable as `{module_name}`." in prompt
 
+
 def test_BUILD_PROMPT_with_error():
     code = "some_code_here"
     module_name = "autodev.llm.prompts"

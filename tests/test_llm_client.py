@@ -70,9 +70,14 @@ def test_ollama_generate_parses_message(monkeypatch):
 
 def test_retry_on_server_error_then_success(monkeypatch):
     payload = {"message": {"content": "recovered"}}
-    patch_post(monkeypatch, [FakeResponse(status_code=500, text="boom"),
-                             FakeResponse(status_code=429, text="slow down"),
-                             FakeResponse(payload=payload)])
+    patch_post(
+        monkeypatch,
+        [
+            FakeResponse(status_code=500, text="boom"),
+            FakeResponse(status_code=429, text="slow down"),
+            FakeResponse(payload=payload),
+        ],
+    )
     client = OllamaClient(retry_wait=0)
     assert client.generate("hi") == "recovered"
 
