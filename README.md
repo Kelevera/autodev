@@ -120,7 +120,31 @@ reachable via `host.docker.internal`.
 
 ## Self-Improvement Demo
 
-*(filled in by Phase 8 — see docs/PROGRESS.md)*
+Autodev was pointed at its own source tree, running fully local against
+**Ollama + qwen2.5:7b** (no cloud API involved):
+
+1. `autodev scan` found **35 real issues** in `src/autodev/`: 1 function with
+   cyclomatic complexity 12, 24 missing docstrings, 5 modules without matching
+   test files, 5 incomplete type-hint sets.
+2. `autodev plan` queued 10 improvement jobs.
+3. `autodev execute` produced **3 merged self-improvements**:
+   - `autodev: add docstrings for git_manager.py` — +83/−14 lines of
+     Google-style docstrings, suite green on attempt 1.
+   - `autodev: add docstrings for executor.py` — +82/−13 lines, attempt 1.
+   - `autodev: add tests for prompts.py` — a brand-new passing test file for a
+     previously untested module.
+4. **5 attempts failed and were automatically reverted** — the 7B model wrote
+   tests asserting on exact timestamps and environment-dependent values;
+   pytest caught every one, autodev rolled back the branch and recorded the
+   failure. This is the core guarantee: *nothing lands unless the suite passes.*
+5. The failures fed real fixes back into autodev itself (commit
+   `fix: lessons from first self-improvement run`): a longer LLM timeout for
+   slow local models and a hardened test-generation prompt. The next two jobs
+   then succeeded on their first attempt.
+
+Every LLM commit lives on an `autodev/*` branch and was human-reviewed before
+merge (review caught one real issue: whole-file rewrites dropped module
+docstrings — restored in a follow-up commit).
 
 ## Development
 
