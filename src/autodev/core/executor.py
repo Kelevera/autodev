@@ -20,6 +20,22 @@ from autodev.llm.client import LLMClient
 from autodev.utils.file_utils import atomic_write, module_name_for, strip_code_fences
 
 
+def create_jobs_from_plans(store: Store, plans: list[ImprovementPlan]) -> list[int]:
+    """Persist plans as pending jobs, skipping files that already have open jobs."""
+    job_ids = []
+    for plan in plans:
+        if store.has_open_job_for(plan.target_file):
+            continue
+        job_ids.append(
+            store.create_job(
+                plan.job_type,
+                plan.target_file,
+                description="; ".join(plan.suggested_changes[:5]),
+            )
+        )
+    return job_ids
+
+
 class Executor:
     """Runs pending jobs end to end against a git repository."""
 
@@ -45,18 +61,7 @@ class Executor:
 
     def create_jobs_from_plans(self, plans: list[ImprovementPlan]) -> list[int]:
         """Persist plans as pending jobs, skipping files with open jobs."""
-        job_ids = []
-        for plan in plans:
-            if self.store.has_open_job_for(plan.target_file):
-                continue
-            job_ids.append(
-                self.store.create_job(
-                    plan.job_type,
-                    plan.target_file,
-                    description="; ".join(plan.suggested_changes[:5]),
-                )
-            )
-        return job_ids
+        return create_jobs_from_plans(self.store, plans)
 
     # -- job execution ----------------------------------------------------------
 
