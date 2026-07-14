@@ -41,7 +41,7 @@ class LLMClient(ABC):
         self,
         model: str,
         max_tokens: int = 4096,
-        timeout: float = 180.0,
+        timeout: float = 600.0,
         max_retries: int = 3,
         retry_wait: float = 60.0,
     ) -> None:

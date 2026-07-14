@@ -17,6 +17,10 @@ Requirements:
 - Import the code under test from `{module_name}`.
 - Only test public functions and classes that actually exist in the module.
 - Include at least one edge case per function where meaningful.
+- Never assert on exact timestamps, auto-generated ids, or environment-dependent
+  values (environment variables, absolute paths, machine state).
+- Construct objects exactly as the module's signatures require (note that
+  pydantic models take keyword arguments only).
 Return ONLY valid Python code for the test file, no markdown, no explanation.
 
 {code}

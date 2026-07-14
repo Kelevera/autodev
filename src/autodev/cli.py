@@ -201,7 +201,7 @@ def status() -> None:
     console.print(f"completed today: {len(completed_today)} (all time: {len(completed)})")
     console.print(f"avg coverage:    {avg_cov}")
     for job in pending[:10]:
-        console.print(f"  #{job['id']} [{job['type']}] {job['target_file']}")
+        console.print(f"  #{job['id']} \\[{job['type']}] {job['target_file']}")
 
 
 @app.command()
