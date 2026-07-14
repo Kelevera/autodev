@@ -1,3 +1,10 @@
+"""Executes improvement jobs: LLM-generated code, validated, tested, committed.
+
+Pipeline per job: create branch -> read target -> prompt LLM -> strip fences ->
+ast.parse validation -> atomic write -> pytest -> commit (pass) or feed the
+error back to the LLM and retry; after max_retries, revert and delete the branch.
+"""
+
 from __future__ import annotations
 
 import ast
@@ -165,7 +172,7 @@ class Executor:
             write_path (Path): The path to the file where the generated code will be written.
 
         Returns:
-            tuple[bool, str]: A tuple indicating whether the improvement was successful and a detail message.
+            tuple[bool, str]: Whether the improvement succeeded, and a detail message.
         """
         source = target.read_text(encoding="utf-8")
         module = module_name_for(target)

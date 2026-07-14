@@ -1,3 +1,5 @@
+"""Git operations for autodev: branching, committing, diffing, reverting."""
+
 from __future__ import annotations
 
 import re
@@ -131,7 +133,8 @@ class GitManager:
         untracked files, and return to the main branch.
 
         Args:
-            remove_paths (list[str | Path] | None, optional): List of paths to be removed. Defaults to None.
+            remove_paths (list[str | Path] | None, optional): Paths to delete.
+                Defaults to None.
         """
         self.repo.git.reset("--hard")
         for path in remove_paths or []:
