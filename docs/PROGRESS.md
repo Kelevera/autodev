@@ -5,8 +5,8 @@ Status legend: [ ] pending · [~] in progress · [x] done
 - [x] Phase 0 — Bootstrap: structure, deps, git init, docs
 - [x] Phase 1 — Database & state (db/store.py + tests) — 11 tests passing
 - [x] Phase 2 — Scanner & analyzer (+ planner.py per spec layout) — 19 tests passing
-- [~] Phase 3 — LLM client & prompts (llm/ + tests)
-- [ ] Phase 4 — Git manager & executor (core/ + tests)
+- [x] Phase 3 — LLM client & prompts + utils — 19 tests passing
+- [~] Phase 4 — Git manager & executor (core/ + tests)
 - [ ] Phase 5 — CLI (cli.py, entrypoint)
 - [ ] Phase 6 — Web dashboard (web/ + templates)
 - [ ] Phase 7 — Config, Docker, CI/CD, README
