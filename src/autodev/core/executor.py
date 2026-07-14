@@ -1,10 +1,3 @@
-"""Executes improvement jobs: LLM-generated code, validated, tested, committed.
-
-Pipeline per job: create branch -> read target -> prompt LLM -> strip fences ->
-ast.parse validation -> atomic write -> pytest -> commit (pass) or feed the
-error back to the LLM and retry; after max_retries, revert and delete the branch.
-"""
-
 from __future__ import annotations
 
 import ast
@@ -21,7 +14,16 @@ from autodev.utils.file_utils import atomic_write, module_name_for, strip_code_f
 
 
 def create_jobs_from_plans(store: Store, plans: list[ImprovementPlan]) -> list[int]:
-    """Persist plans as pending jobs, skipping files that already have open jobs."""
+    """
+    Persist plans as pending jobs, skipping files that already have open jobs.
+
+    Args:
+        store (Store): The database store for job and plan information.
+        plans (list[ImprovementPlan]): A list of improvement plans to be executed.
+
+    Returns:
+        list[int]: A list of IDs for the created jobs.
+    """
     job_ids = []
     for plan in plans:
         if store.has_open_job_for(plan.target_file):
@@ -37,7 +39,9 @@ def create_jobs_from_plans(store: Store, plans: list[ImprovementPlan]) -> list[i
 
 
 class Executor:
-    """Runs pending jobs end to end against a git repository."""
+    """
+    Runs pending jobs end to end against a git repository.
+    """
 
     def __init__(
         self,
@@ -49,6 +53,18 @@ class Executor:
         max_retries: int = 2,
         test_timeout: int = 300,
     ) -> None:
+        """
+        Initializes the Executor with necessary components.
+
+        Args:
+            store (Store): The database store for job and plan information.
+            git (GitManager): Git operations manager.
+            llm (LLMClient): Language model client for generating code improvements.
+            repo_path (str | Path, optional): The path to the repository. Defaults to ".".
+            tests_dir (str, optional): The directory containing test files. Defaults to "tests".
+            max_retries (int, optional): Maximum number of retries for a job. Defaults to 2.
+            test_timeout (int, optional): Timeout for running tests in seconds. Defaults to 300.
+        """
         self.store = store
         self.git = git
         self.llm = llm
@@ -60,13 +76,29 @@ class Executor:
     # -- job creation ---------------------------------------------------------
 
     def create_jobs_from_plans(self, plans: list[ImprovementPlan]) -> list[int]:
-        """Persist plans as pending jobs, skipping files with open jobs."""
+        """
+        Persist plans as pending jobs, skipping files with open jobs.
+
+        Args:
+            plans (list[ImprovementPlan]): A list of improvement plans to be executed.
+
+        Returns:
+            list[int]: A list of IDs for the created jobs.
+        """
         return create_jobs_from_plans(self.store, plans)
 
     # -- job execution ----------------------------------------------------------
 
     def execute_job(self, job: dict) -> bool:
-        """Run one job; returns True when the improvement was committed."""
+        """
+        Run one job; returns True when the improvement was committed.
+
+        Args:
+            job (dict): The job details including type and target file.
+
+        Returns:
+            bool: True if the job was successfully executed and committed.
+        """
         target = Path(job["target_file"])
         write_path = self._write_path_for(job["type"], target)
         branch = self.git.branch_name_for(f"{job['type']}-{target.stem}")
@@ -92,7 +124,15 @@ class Executor:
         return False
 
     def execute_pending(self, max_jobs: int = 3) -> list[tuple[int, bool]]:
-        """Execute up to max_jobs pending jobs; returns (job_id, success) pairs."""
+        """
+        Execute up to max_jobs pending jobs; returns (job_id, success) pairs.
+
+        Args:
+            max_jobs (int, optional): Maximum number of jobs to execute. Defaults to 3.
+
+        Returns:
+            list[tuple[int, bool]]: A list of tuples containing job IDs and their execution status.
+        """
         results = []
         for job in self.store.get_pending_jobs()[:max_jobs]:
             results.append((job["id"], self.execute_job(job)))
@@ -101,11 +141,32 @@ class Executor:
     # -- internals ----------------------------------------------------------
 
     def _write_path_for(self, job_type: str, target: Path) -> Path:
+        """
+        Determine the write path based on the job type and target file.
+
+        Args:
+            job_type (str): The type of job.
+            target (Path): The target file for the job.
+
+        Returns:
+            Path: The path to the file where the generated code will be written.
+        """
         if job_type == "add_tests":
             return self.repo_path / self.tests_dir / f"test_{target.stem}.py"
         return target
 
     def _improve(self, job: dict, target: Path, write_path: Path) -> tuple[bool, str]:
+        """
+        Generate and apply code improvements.
+
+        Args:
+            job (dict): The job details including type and target file.
+            target (Path): The target file for the job.
+            write_path (Path): The path to the file where the generated code will be written.
+
+        Returns:
+            tuple[bool, str]: A tuple indicating whether the improvement was successful and a detail message.
+        """
         source = target.read_text(encoding="utf-8")
         module = module_name_for(target)
         error = ""
@@ -128,7 +189,15 @@ class Executor:
         return False, f"failing after {self.max_retries + 1} attempts: {error[-1000:]}"
 
     def _run_tests(self, test_path: Path | None = None) -> tuple[bool, str]:
-        """Run pytest (whole suite, or one file for freshly generated tests)."""
+        """
+        Run pytest (whole suite or one file for freshly generated tests).
+
+        Args:
+            test_path (Path | None, optional): The path to the test file. Defaults to None.
+
+        Returns:
+            tuple[bool, str]: A tuple indicating whether the tests passed and a detail message.
+        """
         cmd = [sys.executable, "-m", "pytest", "-q", "-x"]
         if test_path is not None:
             cmd.append(str(test_path))
