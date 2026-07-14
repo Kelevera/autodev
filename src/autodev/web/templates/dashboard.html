@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% block title %}autodev — dashboard{% endblock %}
+{% block content %}
+<div class="mb-8 flex items-center justify-between">
+  <h1 class="text-2xl font-semibold text-white">Dashboard</h1>
+  <button
+    hx-post="/api/trigger-scan" hx-swap="innerHTML" hx-target="#scan-status"
+    class="rounded-lg bg-emerald-500 px-4 py-2 text-sm font-medium text-emerald-950 hover:bg-emerald-400">
+    Trigger Scan
+  </button>
+</div>
+<div id="scan-status" class="mb-6 text-sm text-emerald-400"></div>
+
+<div class="mb-8 grid grid-cols-2 gap-4 md:grid-cols-4">
+  {% for label, value, color in [
+      ("Pending", counts.pending, "text-amber-400"),
+      ("Running", counts.running, "text-sky-400"),
+      ("Completed", counts.completed, "text-emerald-400"),
+      ("Failed", counts.failed, "text-rose-400"),
+  ] %}
+  <div class="rounded-xl border border-slate-800 bg-slate-900 p-5">
+    <div class="text-sm text-slate-400">{{ label }}</div>
+    <div class="mt-1 text-3xl font-semibold {{ color }}">{{ value }}</div>
+  </div>
+  {% endfor %}
+</div>
+
+{% if metrics %}
+<div class="mb-8 rounded-xl border border-slate-800 bg-slate-900 p-6">
+  <h2 class="mb-4 text-sm font-medium uppercase tracking-wide text-slate-400">Coverage &amp; complexity per file</h2>
+  <canvas id="metricsChart" height="90"></canvas>
+</div>
+{% endif %}
+
+<div class="rounded-xl border border-slate-800 bg-slate-900">
+  <h2 class="border-b border-slate-800 px-6 py-4 text-sm font-medium uppercase tracking-wide text-slate-400">Jobs</h2>
+  <table class="w-full text-left text-sm">
+    <thead class="text-slate-500">
+      <tr class="border-b border-slate-800">
+        <th class="px-6 py-3">#</th>
+        <th class="px-6 py-3">Status</th>
+        <th class="px-6 py-3">Type</th>
+        <th class="px-6 py-3">File</th>
+        <th class="px-6 py-3">Branch</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% set badge = {
+        "pending": "bg-amber-500/10 text-amber-400",
+        "running": "bg-sky-500/10 text-sky-400",
+        "completed": "bg-emerald-500/10 text-emerald-400",
+        "failed": "bg-rose-500/10 text-rose-400",
+      } %}
+      {% for job in jobs %}
+      <tr class="border-b border-slate-800/60 hover:bg-slate-800/40">
+        <td class="px-6 py-3"><a class="text-sky-400 hover:underline" href="/job/{{ job.id }}">{{ job.id }}</a></td>
+        <td class="px-6 py-3"><span class="rounded-full px-2.5 py-0.5 text-xs {{ badge.get(job.status, 'bg-slate-700 text-slate-300') }}">{{ job.status }}</span></td>
+        <td class="px-6 py-3 text-slate-300">{{ job.type }}</td>
+        <td class="px-6 py-3 font-mono text-xs text-slate-400">{{ job.target_file }}</td>
+        <td class="px-6 py-3 font-mono text-xs text-slate-500">{{ job.branch_name or "—" }}</td>
+      </tr>
+      {% else %}
+      <tr><td colspan="5" class="px-6 py-8 text-center text-slate-500">No jobs yet — trigger a scan, then run <code class="text-slate-300">autodev plan</code>.</td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% if metrics %}
+<script>
+  const metrics = {{ metrics | tojson }};
+  const names = metrics.map(m => m.file_path.split(/[\\/]/).pop());
+  new Chart(document.getElementById("metricsChart"), {
+    type: "bar",
+    data: {
+      labels: names,
+      datasets: [
+        {
+          label: "Coverage %",
+          data: metrics.map(m => m.coverage),
+          backgroundColor: "rgba(52, 211, 153, 0.7)",
+          yAxisID: "y",
+        },
+        {
+          label: "Avg complexity",
+          data: metrics.map(m => m.complexity),
+          backgroundColor: "rgba(56, 189, 248, 0.7)",
+          yAxisID: "y1",
+        },
+      ],
+    },
+    options: {
+      color: "#94a3b8",
+      scales: {
+        x: { ticks: { color: "#64748b" }, grid: { color: "#1e293b" } },
+        y: { min: 0, max: 100, ticks: { color: "#64748b" }, grid: { color: "#1e293b" } },
+        y1: { position: "right", min: 0, ticks: { color: "#64748b" }, grid: { drawOnChartArea: false } },
+      },
+    },
+  });
+</script>
+{% endif %}
+{% endblock %}

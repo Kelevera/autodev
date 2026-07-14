@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}autodev — job {{ job.id }}{% endblock %}
+{% block content %}
+{% set badge = {
+  "pending": "bg-amber-500/10 text-amber-400",
+  "running": "bg-sky-500/10 text-sky-400",
+  "completed": "bg-emerald-500/10 text-emerald-400",
+  "failed": "bg-rose-500/10 text-rose-400",
+} %}
+<div class="mb-6 flex items-center gap-4">
+  <a href="/dashboard" class="text-sm text-slate-500 hover:text-slate-300">&larr; back</a>
+  <h1 class="text-2xl font-semibold text-white">Job #{{ job.id }}</h1>
+  <span class="rounded-full px-3 py-1 text-sm {{ badge.get(job.status, 'bg-slate-700 text-slate-300') }}">{{ job.status }}</span>
+</div>
+
+<div class="mb-8 grid gap-4 md:grid-cols-2">
+  <div class="rounded-xl border border-slate-800 bg-slate-900 p-5 text-sm">
+    <dl class="space-y-2">
+      <div class="flex gap-3"><dt class="w-28 text-slate-500">Type</dt><dd class="text-slate-200">{{ job.type }}</dd></div>
+      <div class="flex gap-3"><dt class="w-28 text-slate-500">Target</dt><dd class="font-mono text-xs text-slate-300">{{ job.target_file }}</dd></div>
+      <div class="flex gap-3"><dt class="w-28 text-slate-500">Branch</dt><dd class="font-mono text-xs text-slate-300">{{ job.branch_name or "—" }}</dd></div>
+      <div class="flex gap-3"><dt class="w-28 text-slate-500">Created</dt><dd class="text-slate-300">{{ job.created_at }}</dd></div>
+      <div class="flex gap-3"><dt class="w-28 text-slate-500">Completed</dt><dd class="text-slate-300">{{ job.completed_at or "—" }}</dd></div>
+      <div class="flex gap-3"><dt class="w-28 text-slate-500">Result</dt><dd class="text-slate-300">{{ job.result or "—" }}</dd></div>
+    </dl>
+  </div>
+  <div class="rounded-xl border border-slate-800 bg-slate-900 p-5 text-sm">
+    <h2 class="mb-2 text-xs font-medium uppercase tracking-wide text-slate-500">Description</h2>
+    <p class="whitespace-pre-wrap text-slate-300">{{ job.description or "—" }}</p>
+  </div>
+</div>
+
+<div class="rounded-xl border border-slate-800 bg-slate-900">
+  <h2 class="border-b border-slate-800 px-6 py-4 text-sm font-medium uppercase tracking-wide text-slate-400">Diff</h2>
+  {% if job.diff_summary %}
+  <pre class="overflow-x-auto px-6 py-4 font-mono text-xs leading-relaxed">{% for line in job.diff_summary.splitlines() %}<span class="{% if line.startswith('+') and not line.startswith('+++') %}text-emerald-400{% elif line.startswith('-') and not line.startswith('---') %}text-rose-400{% elif line.startswith('@@') %}text-sky-400{% else %}text-slate-400{% endif %}">{{ line }}</span>
+{% endfor %}</pre>
+  {% else %}
+  <p class="px-6 py-8 text-center text-sm text-slate-500">No diff recorded.</p>
+  {% endif %}
+</div>
+{% endblock %}
