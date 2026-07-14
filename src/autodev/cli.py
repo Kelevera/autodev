@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 import typer
@@ -127,8 +127,8 @@ def plan() -> None:
     job_ids = create_jobs_from_plans(store, plans)
     store.close()
     console.print(f"[green]{len(job_ids)} new jobs queued[/green] ({len(plans)} plans total).")
-    for improvement in plans[: len(job_ids) or 5]:
-        console.print(f"  [{improvement.priority}] {improvement.job_type}: {improvement.target_file}")
+    for item in plans[: len(job_ids) or 5]:
+        console.print(f"  [{item.priority}] {item.job_type}: {item.target_file}")
 
 
 @app.command()
@@ -190,7 +190,7 @@ def status() -> None:
     store = Store(settings.db_path)
     pending = store.get_pending_jobs()
     completed = store.get_completed_jobs()
-    today = datetime.now(timezone.utc).date().isoformat()
+    today = datetime.now(UTC).date().isoformat()
     completed_today = [j for j in completed if (j["completed_at"] or "").startswith(today)]
     latest = store.get_latest_metrics()
     store.close()

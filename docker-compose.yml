@@ -1,0 +1,24 @@
+services:
+  autodev:
+    build: .
+    # Mount this repository so the container can analyze and improve itself.
+    volumes:
+      - .:/workspace
+    env_file:
+      - .env
+    environment:
+      # Reach a host-side Ollama from inside the container by default.
+      AUTODEV_BASE_URL: ${AUTODEV_BASE_URL:-http://host.docker.internal:11434}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: ["loop", "--interval", "3600"]
+
+  dashboard:
+    build: .
+    volumes:
+      - .:/workspace
+    env_file:
+      - .env
+    command: ["dashboard", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "8000:8000"

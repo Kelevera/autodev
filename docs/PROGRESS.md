@@ -9,8 +9,8 @@ Status legend: [ ] pending · [~] in progress · [x] done
 - [x] Phase 4 — Git manager & executor — 14 tests passing (63 total)
 - [x] Phase 5 — CLI + config.py — 8 tests passing (71 total)
 - [x] Phase 6 — Web dashboard — 6 tests passing (77 total); routes verified live in browser
-- [~] Phase 7 — Config, Docker, CI/CD, README
-- [ ] Phase 8 — Self-improvement demonstration
+- [x] Phase 7 — Config, Docker, CI/CD, README, LICENSE — ruff clean, 92% coverage
+- [~] Phase 8 — Self-improvement demonstration
 - [ ] Phase 9 — Final testing & polish (coverage >= 80%, ruff clean)
 - [ ] Phase 10 — GitHub publish (needs username/repo from user)
 

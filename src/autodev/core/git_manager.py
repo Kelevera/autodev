@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 from git import Repo
@@ -36,7 +36,7 @@ class GitManager:
 
     def branch_name_for(self, description: str) -> str:
         """Build an `autodev/{timestamp}-{slug}` branch name."""
-        stamp = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S")
+        stamp = datetime.now(UTC).strftime("%Y%m%d-%H%M%S")
         return f"autodev/{stamp}-{slugify(description)}"
 
     def create_branch(self, name: str) -> str:

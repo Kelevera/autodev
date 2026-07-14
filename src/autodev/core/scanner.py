@@ -57,9 +57,8 @@ def _check_function(node: ast.FunctionDef | ast.AsyncFunctionDef, path: Path) ->
     """Check one function for docstring, type-hint, and length issues."""
     issues: list[Issue] = []
     if _is_public(node.name) and ast.get_docstring(node) is None:
-        issues.append(
-            _issue(path, node.lineno, "missing_docstring", f"Function '{node.name}' has no docstring")
-        )
+        description = f"Function '{node.name}' has no docstring"
+        issues.append(_issue(path, node.lineno, "missing_docstring", description))
     args = [a for a in [*node.args.args, *node.args.kwonlyargs] if a.arg not in ("self", "cls")]
     unannotated = [a.arg for a in args if a.annotation is None]
     needs_return = node.returns is None and node.name != "__init__"

@@ -72,7 +72,8 @@ def test_scan_file_skips_syntax_errors(tmp_path):
 
 def test_complexity_issue_detected(tmp_path):
     branches = "\n".join(f"    if x == {i}:\n        return {i}" for i in range(12))
-    path = _write(tmp_path, "complex.py", f'def switch(x: int) -> int:\n    """Doc."""\n{branches}\n    return -1\n')
+    code = f'def switch(x: int) -> int:\n    """Doc."""\n{branches}\n    return -1\n'
+    path = _write(tmp_path, "complex.py", code)
     issues = scanner.complexity_issues(path)
     assert len(issues) == 1
     assert issues[0].issue_type == "high_complexity"

@@ -53,5 +53,6 @@ def plan_for_file(file_path: str, issues: list[Issue]) -> ImprovementPlan:
 
 def build_plans(issues: list[Issue]) -> list[ImprovementPlan]:
     """Group issues per file and emit plans, most urgent first."""
-    plans = [plan_for_file(path, file_issues) for path, file_issues in group_by_file(issues).items()]
+    grouped = group_by_file(issues)
+    plans = [plan_for_file(path, file_issues) for path, file_issues in grouped.items()]
     return sorted(plans, key=lambda p: (PRIORITY_RANK[p.priority], p.target_file))
