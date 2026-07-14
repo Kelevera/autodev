@@ -1,0 +1,50 @@
+[project]
+name = "autodev"
+version = "1.0.0"
+description = "A codebase that maintains itself: scans, plans, and fixes its own code using LLMs."
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "MIT" }
+dependencies = [
+    "typer>=0.12",
+    "fastapi>=0.115",
+    "uvicorn>=0.30",
+    "jinja2>=3.1",
+    "gitpython>=3.1",
+    "pytest>=8.2",
+    "coverage>=7.5",
+    "radon>=6.0",
+    "ruff>=0.5",
+    "httpx>=0.27",
+    "pydantic>=2.7",
+    "pydantic-settings>=2.3",
+]
+
+[dependency-groups]
+dev = ["pytest-cov>=5.0"]
+
+[project.scripts]
+autodev = "autodev.cli:app"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/autodev"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 100
+src = ["src", "tests"]
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP"]
+
+[tool.coverage.run]
+source = ["src/autodev"]
+omit = ["src/autodev/web/templates/*"]

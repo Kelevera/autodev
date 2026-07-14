@@ -1,0 +1,33 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Testing / coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.json
+
+# Tooling
+.ruff_cache/
+uv.lock.tmp
+
+# autodev runtime state
+autodev.db
+autodev.db-journal
+*.tmp
+
+# Environment
+.env
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
