@@ -1,5 +1,3 @@
-"""Git operations for autodev: branching, committing, diffing, reverting."""
-
 from __future__ import annotations
 
 import re
@@ -33,6 +31,11 @@ class GitManager:
     """
 
     def __init__(self, repo_path: str | Path = ".") -> None:
+        """Initialize a new instance of GitManager.
+
+        Args:
+            repo_path (str | Path, optional): The path to the git repository. Defaults to '.'.
+        """
         self.repo = Repo(repo_path)
         self.repo_path = Path(self.repo.working_dir)
         self.main_branch = self._detect_main_branch()
