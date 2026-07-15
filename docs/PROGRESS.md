@@ -24,10 +24,9 @@ Status legend: [ ] pending · [~] in progress · [x] done
 - Repo root: `autodev/` inside the project workspace.
 - One test file was authored by autodev itself (tests/test_prompts.py); two
   modules carry LLM-written docstrings (executor, git_manager), human-reviewed.
-- Docker image build NOT verified locally: Docker Desktop's engine did not
-  start on the build machine (CLI 29.5.3 present, daemon unreachable). The
-  Dockerfile/compose follow standard patterns; verify with `docker compose up
-  --build` on a machine with a running daemon.
+- Docker image verified after a slow Docker Desktop cold start: `docker build`
+  succeeds and `docker run --rm autodev:v1 --help` serves the CLI from the
+  container (engine 29.5.3).
 - CI runs on the two docstring demo branches fail by design: they are
   pre-review snapshots and contain the style issues cleaned up on main.
 
