@@ -34,6 +34,25 @@ Status legend: [ ] pending · [~] in progress · [x] done
 
 (none — all 79 tests pass unskipped)
 
+## Round 2 (post-publish, 2026-07-15)
+
+All 8 remaining jobs executed against Ollama/qwen2.5:7b: **3 completed, 5
+failed-and-reverted**. Review outcomes:
+
+- MERGED `add_tests store.py` — 10 solid tests using `:memory:` SQLite; the
+  hardened prompt eliminated round 1's timestamp flakiness (suite now 89 tests).
+- MERGED `add_docstrings git_manager.py` — proper `__init__` docstring; module
+  docstring dropped again and restored in review.
+- REJECTED `add_docstrings cli.py` — tests passed, but the change added no
+  docstrings, collapsed PEP8 blank lines, and introduced annotations referencing
+  unimported names (masked by `from __future__ import annotations`). Branch
+  deleted. New lesson: a green suite is necessary, not sufficient — style/lint
+  gates belong in the executor's validation step (future work: run `ruff check`
+  before committing a job).
+- Failures: app.py tests (TestClient without lifespan), scanner refactor
+  (broke public API, caught by suite), config/planner tests (env-dependent
+  asserts, wrong constructor), client.py docstrings (persistent syntax errors).
+
 ## Lessons Learned
 
 1. **Small local models write flaky tests.** qwen2.5:7b asserted on exact

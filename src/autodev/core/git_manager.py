@@ -1,3 +1,5 @@
+"""Git operations for autodev: branching, committing, diffing, reverting."""
+
 from __future__ import annotations
 
 import re
