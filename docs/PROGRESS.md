@@ -14,7 +14,8 @@ Status legend: [ ] pending · [~] in progress · [x] done
       (qwen2.5:7b), 5 failures auto-reverted
 - [x] Phase 9 — Final testing & polish: 79 tests, 92.38% coverage (gate 80%),
       ruff check + format clean, final self-scan 35 → 30 issues
-- [~] Phase 10 — GitHub publish (needs username/repo from user)
+- [x] Phase 10 — Published to https://github.com/Kelevera/autodev (main + v1.0.0
+      tag + 3 autodev/* demo branches); CI green on main (79 tests, 92.38% coverage)
 
 ## Notes
 
@@ -23,6 +24,12 @@ Status legend: [ ] pending · [~] in progress · [x] done
 - Repo root: `autodev/` inside the project workspace.
 - One test file was authored by autodev itself (tests/test_prompts.py); two
   modules carry LLM-written docstrings (executor, git_manager), human-reviewed.
+- Docker image build NOT verified locally: Docker Desktop's engine did not
+  start on the build machine (CLI 29.5.3 present, daemon unreachable). The
+  Dockerfile/compose follow standard patterns; verify with `docker compose up
+  --build` on a machine with a running daemon.
+- CI runs on the two docstring demo branches fail by design: they are
+  pre-review snapshots and contain the style issues cleaned up on main.
 
 ## Skipped tests
 
